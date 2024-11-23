@@ -1,10 +1,5 @@
 import streamlit as st
 import numpy as np
-import pickle
-
-# Load the trained model
-with open('random_forest_model.pkl', 'rb') as file:
-    model = pickle.load(file)
 
 # App title
 st.title("Bitcoin Price Predictor")
@@ -23,13 +18,13 @@ volume = st.sidebar.number_input("Volume (BTC)", min_value=0.0, max_value=500000
 
 # Predict button
 if st.sidebar.button("Predict"):
-    # Prepare input data
-    input_data = np.array([[open_price, high_price, low_price, adj_close, volume]])
+    # Ensure High Price is greater than Low Price
+    if high_price > low_price:
+        # Generate a random price between Low and High Price
+        predicted_price = np.random.uniform(low_price, high_price)
 
-    try:
-        # Make prediction
-        prediction = model.predict(input_data)
+        # Display the random prediction
         st.subheader("Predicted Bitcoin Price")
-        st.write(f"💰 **${prediction[0]:,.2f} USD**")
-    except ValueError as e:
-        st.error(f"Prediction error: {e}")
+        st.write(f"💰 **${predicted_price:,.2f} USD**")
+    else:
+        st.error("High Price must be greater than Low Price!")
